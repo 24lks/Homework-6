@@ -1,0 +1,173 @@
+---
+title: "Homework 6"
+output: html_document
+date: "2025-10-15"
+---
+
+##Task 1: Conceptual Questions
+
+**1.What is the purpose of the lapply() function? What is the equivalent purrr function?**
+
+**2. Suppose we have a list called my_list. Each element of the list is a numeric data frame (all columns are numeric). We want use lapply() to run the code cor(numeric_matrix, method = "kendall") on each element of the list. Write code to do this below! (I’m really trying to ask you how you specify method = "kendall" when calling lapply())**
+
+**3. What are two advantages of using purrr functions instead of the BaseR apply family?**
+
+**4. What is a side-effect function?**
+
+**5. Why can you name a variable sd in a function and not cause any issues with the sd function?**
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+##Task 2 - Writing R Functions
+
+1.Write a basic function (call it getRMSE()) that takes in a vector of responses and a vector of predictions and outputs the RMSE.
+
+```{r}
+getRMSE<-function(responses, predictions, ...){
+  rmse <- sqrt(mean((responses - predictions)^2, ...))
+  return(rmse)
+  } 
+  
+
+```
+
+2.  Run the following code to create some response values and predictions.
+
+```{r}
+set.seed(10)
+n <- 100
+x <- runif(n)
+resp <- 3 + 10 * x + rnorm(n)
+pred <- predict(lm(resp ~ x), data.frame(x))
+
+#Checking RMSE Function
+getRMSE(resp, pred)
+
+# Replace two response values with NA_real_
+resp[2] <- NA_real_
+resp[4] <- NA_real_
+
+# Check if RMSE still works if some values are NA
+
+getRMSE(resp, pred, na.rm = TRUE)
+
+```
+3. Write a function called getMAE() that follows the specifications of the getRMSE() function.
+```{r}
+getMAE<-function(responses, predictions, ...){
+  mae <- mean(abs(responses - predictions), ...)
+  return(mae)
+  } 
+```
+
+4.  Run the following code to create some response values and predictions.
+
+```{r}
+set.seed(10)
+n <- 100
+x <- runif(n)
+resp <- 3 + 10 * x + rnorm(n)
+pred <- predict(lm(resp ~ x), data.frame(x))
+
+#Checking MAE Function
+getMAE(resp, pred)
+
+# Replace two response values with NA_real_
+resp[2] <- NA_real_
+resp[4] <- NA_real_
+
+# Check if RMSE still works if some values are NA
+
+getMAE(resp, pred, na.rm = TRUE)
+
+```
+5. Let’s create a wrapper function that can be used to get either or both metrics returned with a single function call. Do not rewrite your above two functions, call them inside the wrapper function (we would call the getRMSE() and getMAE() functions helper functions). When returning your values, give them appropriate names.
+
+```{r}
+ wrapper<- function(responses, predictions, metrics = c("RMSE", "MAE"), ...) {
+    results <- list() 
+   # --- Check inputs ---
+  if (!(is.vector(responses)) | !(is.atomic(responses)) | !(is.numeric(responses))) {
+    stop("'responses' must be a numeric atomic vector.")
+  }
+  if (!(is.vector(predictions)) | !(is.atomic(predictions)) | !(is.numeric(predictions))) {
+    stop("'predictions' must be a numeric atomic vector.")
+  }
+  if (length(responses) != length(predictions)) {
+    stop("'responses' and 'predictions' must have the same length.")
+  }
+
+  if ("RMSE" %in% metrics) {
+    results$RMSE <- getRMSE(responses, predictions, ...)
+  }
+  if ("MAE" %in% metrics) {
+    results$MAE <- getMAE(responses, predictions, ...)
+  }
+else{
+  results$RMSE <- getRMSE(responses, predictions, ...)
+  results$MAE <- getMAE(responses, predictions, ...)
+}
+    return(results)
+ }
+
+```
+6. Run the following code to create some response values and predictions.
+
+```{r}
+set.seed(10)
+n <- 100
+x <- runif(n)
+resp <- 3 + 10 * x + rnorm(n)
+pred <- predict(lm(resp ~ x), data.frame(x))
+
+#Checking MAE only
+wrapper(resp, pred, metrics="MAE")
+
+#Checking RSME only
+wrapper(resp, pred, metrics="RSME")
+
+#Checking both
+wrapper(resp, pred, metrics = c("RMSE", "MAE"))
+
+#Checking if no metric is specifiied
+wrapper(resp, pred)
+
+
+# Replace two response values with NA_real_
+resp[2] <- NA_real_
+resp[4] <- NA_real_
+
+# Check if wrapper still works if some values are NA
+
+#Checking MAE only
+wrapper(resp, pred, metrics="MAE", na.rm = TRUE)
+
+#Checking RSME only
+wrapper(resp, pred, metrics="RSME", na.rm = TRUE)
+
+#Checking both
+wrapper(resp, pred, metrics = c("RMSE", "MAE"), na.rm = TRUE)
+
+#Checking if no metric is specified
+wrapper(resp, pred, na.rm = TRUE)
+
+
+#Checking passing someting it should not get
+
+responses_df <- data.frame(3, 5, 2.5, 7)
+predictions_df <- data.frame(2.5, 5, 4, 8)
+
+try(wrapper(responses_df, predictions_df))
+```
