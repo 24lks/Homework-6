@@ -172,7 +172,3 @@ predictions_df <- data.frame(2.5, 5, 4, 8)
 try(wrapper(responses_df, predictions_df))
 ```
 ##Task 3 - Practice with purrr
-
-```{r}
-
-``
