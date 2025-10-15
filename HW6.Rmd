@@ -185,8 +185,8 @@ try(wrapper(responses_df, predictions_df))
 ```{r}
 iris<-iris
 lm_fit1 <- lm(Sepal.Length ~ Sepal.Width + Species, data = iris)
-
-
+library(purrr)
+help(purr)
 ```
 
 
