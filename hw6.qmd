@@ -206,5 +206,7 @@ data = iris)
 fits <- list(lm_fit1, lm_fit2, lm_fit3, lm_fit4)
 
 ```
+hi
+
 
 
