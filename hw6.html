@@ -112,10 +112,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <p>##Task 1: Conceptual Questions</p>
 <p><strong>1.What is the purpose of the lapply() function? What is the equivalent purrr function?</strong></p>
+<p>The lapply() function applies a function to a list. Map() is the equivalent to lapply() in purrr.</p>
 <p><strong>2. Suppose we have a list called my_list. Each element of the list is a numeric data frame (all columns are numeric). We want use lapply() to run the code cor(numeric_matrix, method = “kendall”) on each element of the list. Write code to do this below! (I’m really trying to ask you how you specify method = “kendall” when calling lapply())</strong></p>
+<p>lapply(my_list, cor, method = “kendall”)</p>
 <p><strong>3. What are two advantages of using purrr functions instead of the BaseR apply family?</strong></p>
+<p>Main advantage is more consistency and some helper functions</p>
 <p><strong>4. What is a side-effect function?</strong></p>
+<p>A side-effect function is one of the functions like print, write.csv(), plots, etc.</p>
 <p><strong>5. Why can you name a variable sd in a function and not cause any issues with the sd function?</strong></p>
+<p>When you define a variable in the function it only lives in the function, so it is not trying to do anything globally so it won’t mess with the usual sd function.</p>
 <section id="r-markdown" class="level2">
 <h2 class="anchored" data-anchor-id="r-markdown">R Markdown</h2>
 <p>This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <a href="http://rmarkdown.rstudio.com" class="uri">http://rmarkdown.rstudio.com</a>.</p>
@@ -445,13 +450,87 @@ Speciesvirginica  -1.6831329 -0.36386273</code></pre>
 <ol start="4" type="1">
 <li>Next, let’s create histograms of the residuals in each model fit! Run the code here to set up a 2x2 plotting window.</li>
 </ol>
-<p>par(mfrow = c(2, 2))</p>
-<p>#Now, pull out the residual vectors (the resid elements of your fits) using map(). Then use the walk() function with hist to create plots.</p>
-</section>
-<section id="extract-residuals-from-each-model-in-the-fits-list" class="level1">
-<h1>Extract residuals from each model in the fits list</h1>
-<p>residuals &lt;- map(fits, resid)</p>
-<p>#use walk for the histogram residuals|&gt; walk(hist)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>))</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a><span class="co">#Now, pull out the residual vectors (the resid elements of your fits) using map(). Then use the walk() function with hist to create plots.</span></span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract residuals from each model in the fits list</span></span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>resids <span class="ot">&lt;-</span> <span class="fu">map</span>(fits, resid)</span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a><span class="co">#use walk for the histogram</span></span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a><span class="fu">walk</span>(resids, hist)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="hw6_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="hw6_files/figure-html/unnamed-chunk-10-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="hw6_files/figure-html/unnamed-chunk-10-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="hw6_files/figure-html/unnamed-chunk-10-4.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<ol start="5" type="1">
+<li>That was cool! However, the names stink… Let’s try to fix that! On the list that is created from the map() function used on the resid element, use the purrr::set_names() function to give the names “fit1”, “fit2”, “fit3”, and “fit4” to the list elements.</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>))</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>names_resid<span class="ot">&lt;-</span><span class="fu">set_names</span>(resids, <span class="fu">c</span>(<span class="st">"fit1"</span>, <span class="st">"fit2"</span>, <span class="st">"fit3"</span>, <span class="st">"fit4"</span>))</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a><span class="fu">help</span>(imap)</span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a><span class="fu">iwalk</span>(names_resid, \(x, idx) <span class="fu">hist</span>(x, <span class="at">main =</span> idx))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="hw6_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="hw6_files/figure-html/unnamed-chunk-11-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="hw6_files/figure-html/unnamed-chunk-11-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="hw6_files/figure-html/unnamed-chunk-11-4.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 </section>
 
 </main>
