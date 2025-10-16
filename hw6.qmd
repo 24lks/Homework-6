@@ -205,8 +205,31 @@ lm_fit4 <- lm(Sepal.Length ~ Petal.Width + Petal.Length + Sepal.Width + Species,
 data = iris)
 fits <- list(lm_fit1, lm_fit2, lm_fit3, lm_fit4)
 
+#Now let’s use the purrr::map() function to pull out the coefficients of each model fit from the fits object (using pluck!).
+
+map(fits, pluck, "coefficients")
 ```
-hi
 
+3. There is a function called confint() that creates confidence intervals for the coefficients in an lm() fit. We apply that function directly to the fitted object like this:
 
+```{r}
+confint(lm_fit1)
+
+#Use map() to apply the confint() function to each model fit in the fits object
+
+map(fits, confint)
+```
+4. Next, let’s create histograms of the residuals in each model fit! Run the code here to set up a 2x2 plotting window.
+
+```{r}
+par(mfrow = c(2, 2))
+
+#Now, pull out the residual vectors (the resid elements of your fits) using map(). Then use the walk() function with hist to create plots.
+
+# Extract residuals from each model in the fits list
+residuals <- map(fits, resid)
+
+#use walk for the histogram
+residuals|>
+  walk(hist)
 

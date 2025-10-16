@@ -369,9 +369,89 @@ Coefficients:
 <span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>lm_fit3 <span class="ot">&lt;-</span> <span class="fu">lm</span>(Sepal.Length <span class="sc">~</span> Petal.Width <span class="sc">+</span> Sepal.Width <span class="sc">+</span> Species, <span class="at">data =</span> iris)</span>
 <span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>lm_fit4 <span class="ot">&lt;-</span> <span class="fu">lm</span>(Sepal.Length <span class="sc">~</span> Petal.Width <span class="sc">+</span> Petal.Length <span class="sc">+</span> Sepal.Width <span class="sc">+</span> Species,</span>
 <span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a><span class="at">data =</span> iris)</span>
-<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>fits <span class="ot">&lt;-</span> <span class="fu">list</span>(lm_fit1, lm_fit2, lm_fit3, lm_fit4)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>fits <span class="ot">&lt;-</span> <span class="fu">list</span>(lm_fit1, lm_fit2, lm_fit3, lm_fit4)</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a><span class="co">#Now let’s use the purrr::map() function to pull out the coefficients of each model fit from the fits object (using pluck!).</span></span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a><span class="fu">map</span>(fits, pluck, <span class="st">"coefficients"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[[1]]
+      (Intercept)       Sepal.Width Speciesversicolor  Speciesvirginica 
+        2.2513932         0.8035609         1.4587431         1.9468166 
+
+[[2]]
+(Intercept) Sepal.Width 
+  6.5262226  -0.2233611 
+
+[[3]]
+      (Intercept)       Petal.Width       Sepal.Width Speciesversicolor 
+        2.5210733         0.3715768         0.6982260         0.9881297 
+ Speciesvirginica 
+        1.2375878 
+
+[[4]]
+      (Intercept)       Petal.Width      Petal.Length       Sepal.Width 
+        2.1712663        -0.3151552         0.8292439         0.4958889 
+Speciesversicolor  Speciesvirginica 
+       -0.7235620        -1.0234978 </code></pre>
 </div>
-<p>hi</p>
+</div>
+<ol start="3" type="1">
+<li>There is a function called confint() that creates confidence intervals for the coefficients in an lm() fit. We apply that function directly to the fitted object like this:</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>(lm_fit1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                      2.5 %   97.5 %
+(Intercept)       1.5206309 2.982156
+Sepal.Width       0.5933983 1.013723
+Speciesversicolor 1.2371791 1.680307
+Speciesvirginica  1.7491525 2.144481</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Use map() to apply the confint() function to each model fit in the fits object</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a><span class="fu">map</span>(fits, confint)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[[1]]
+                      2.5 %   97.5 %
+(Intercept)       1.5206309 2.982156
+Sepal.Width       0.5933983 1.013723
+Speciesversicolor 1.2371791 1.680307
+Speciesvirginica  1.7491525 2.144481
+
+[[2]]
+                2.5 %     97.5 %
+(Intercept)  5.579865 7.47258038
+Sepal.Width -0.529820 0.08309785
+
+[[3]]
+                        2.5 %    97.5 %
+(Intercept)        1.74261803 3.2995285
+Petal.Width       -0.02042746 0.7635811
+Sepal.Width        0.46205710 0.9343950
+Speciesversicolor  0.44520784 1.5310516
+Speciesvirginica   0.46412393 2.0110518
+
+[[4]]
+                       2.5 %      97.5 %
+(Intercept)        1.6182321  2.72430044
+Petal.Width       -0.6140049 -0.01630542
+Petal.Length       0.6937939  0.96469395
+Sepal.Width        0.3257653  0.66601260
+Speciesversicolor -1.1982739 -0.24885002
+Speciesvirginica  -1.6831329 -0.36386273</code></pre>
+</div>
+</div>
+<ol start="4" type="1">
+<li>Next, let’s create histograms of the residuals in each model fit! Run the code here to set up a 2x2 plotting window.</li>
+</ol>
+<p>par(mfrow = c(2, 2))</p>
+<p>#Now, pull out the residual vectors (the resid elements of your fits) using map(). Then use the walk() function with hist to create plots.</p>
+</section>
+<section id="extract-residuals-from-each-model-in-the-fits-list" class="level1">
+<h1>Extract residuals from each model in the fits list</h1>
+<p>residuals &lt;- map(fits, resid)</p>
+<p>#use walk for the histogram residuals|&gt; walk(hist)</p>
 </section>
 
 </main>
